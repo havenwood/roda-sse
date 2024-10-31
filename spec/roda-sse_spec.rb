@@ -33,6 +33,12 @@ describe 'roda-sse plugin' do
     assert last_response.ok?
   end
 
+  it 'does not respond to PUT' do
+    post '/'
+
+    refute last_response.ok?
+  end
+
   it 'has SSE headers' do
     get '/'
 

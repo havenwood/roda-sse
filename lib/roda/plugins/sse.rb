@@ -19,10 +19,10 @@ class Roda
     module SSE
       module RequestMethods
         def sse(&block)
-          response['Content-Type'] = 'text/event-stream'
-          response['Cache-Control'] = 'no-cache'
+          get do
+            response['Content-Type'] = 'text/event-stream'
+            response['Cache-Control'] = 'no-cache'
 
-          always do
             halt response.finish_with_body(block)
           end
         end
