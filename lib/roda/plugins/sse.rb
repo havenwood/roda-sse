@@ -11,19 +11,48 @@ class Roda
     #       # GET /
     #       r.sse do |stream|
     #         stream.write "data: hola\n\n"
-    #       ensure
-    #         stream.close
     #       end
     #     end
     #   end
     module SSE
+      class Stream
+        def initialize(&block)
+          @block = block
+        end
+
+        def write(message)
+          data = message.to_s
+          @stream.write(data)
+          data.bytesize
+        end
+
+        def <<(message)
+          @stream.write(message.to_s)
+          self
+        end
+
+        def call(stream)
+          @stream = stream
+          @block.call(stream)
+        ensure
+          close
+        end
+
+        def close
+          @stream&.close
+          @closed = true
+        end
+
+        def closed? = @closed
+      end
+
       module RequestMethods
         def sse(&block)
           get do
             response['Content-Type'] = 'text/event-stream'
             response['Cache-Control'] = 'no-cache'
 
-            halt response.finish_with_body(block)
+            halt response.finish_with_body(Stream.new(&block))
           end
         end
       end

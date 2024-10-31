@@ -30,7 +30,5 @@ In your routing block, you can then use `r.sse` to stream with the correct heade
 r.sse do |stream|
   stream << "data: hello\n\n"
   stream << "data: world\n\n"
-ensure
-  stream.close
 end
 ```

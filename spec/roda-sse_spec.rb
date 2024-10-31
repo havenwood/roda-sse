@@ -13,8 +13,6 @@ class App < Roda
     r.root do
       r.sse do |stream|
         stream.write "data: hola\n\n"
-      ensure
-        stream.close
       end
     end
   end
@@ -23,40 +21,66 @@ end
 def app = App.freeze.app
 
 describe 'roda-sse plugin' do
-  include Rack::Test::Methods
-
   prove_it!
 
-  it 'responds 200 OK' do
-    get '/'
+  describe 'stream class' do
+    before do
+      @stream = Roda::RodaPlugins::SSE::Stream.new do |stream|
+        stream << 42
+        stream.write(43)
+      end
+    end
 
-    assert last_response.ok?
+    it 'opens' do
+      refute @stream.closed?
+    end
+
+    it 'streams and closes' do
+      stream = Minitest::Mock.new
+      stream.expect(:<<, nil, [42])
+      stream.expect(:write, nil, [43])
+      stream.expect(:close, nil)
+      @stream.call(stream)
+      assert_instance_of Roda::RodaPlugins::SSE::Stream, @stream
+
+      stream.verify
+    end
   end
 
-  it 'does not respond to PUT' do
-    post '/'
+  describe 'roda app' do
+    include Rack::Test::Methods
 
-    refute last_response.ok?
-  end
+    it 'responds 200 OK' do
+      get '/'
 
-  it 'has SSE headers' do
-    get '/'
+      assert last_response.ok?
+    end
 
-    headers = {'content-type' => 'text/event-stream', 'cache-control' => 'no-cache'}
-    assert_equal headers, last_response.headers
-  end
+    it 'does not respond to PUT' do
+      post '/'
 
-  it 'streams the body' do
-    get '/'
+      refute last_response.ok?
+    end
 
-    stream = Minitest::Mock.new
-    stream.expect(:write, nil, ["data: hola\n\n"])
-    stream.expect(:close, nil)
-    response_body = last_response.instance_variable_get(:@body)
-    assert_instance_of Proc, response_body
+    it 'has SSE headers' do
+      get '/'
 
-    response_body.call(stream)
+      headers = {'content-type' => 'text/event-stream', 'cache-control' => 'no-cache'}
+      assert_equal headers, last_response.headers
+    end
 
-    stream.verify
+    it 'streams the body' do
+      get '/'
+
+      stream = Minitest::Mock.new
+      stream.expect(:write, nil, ["data: hola\n\n"])
+      stream.expect(:close, nil)
+      response_body = last_response.instance_variable_get(:@body)
+      assert_instance_of Roda::RodaPlugins::SSE::Stream, response_body
+
+      response_body.call(stream)
+
+      stream.verify
+    end
   end
 end
