@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = 'roda-sse'
-  s.version = '0.1.0'
+  s.version = '0.2.0'
   s.license = 'MIT'
   s.summary = 'SSE integration for Roda'
   s.description = 'The roda-sse gem integrates simple SSE streaming into the roda web toolkit.'
