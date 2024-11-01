@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'async'
+require 'async/barrier'
+
 class Roda
   module RodaPlugins
     # Example:
@@ -18,27 +21,39 @@ class Roda
       class Stream
         def initialize(&block)
           @block = block
+          @barrier = Async::Barrier.new
         end
 
         def write(message)
           data = message.to_s
-          @stream.write(data)
+
+          @barrier.async do
+            @stream.write(data)
+          rescue Errno::ECONNRESET, Errno::EPIPE
+            @barrier.close
+          end
+
           data.bytesize
         end
 
         def <<(message)
-          @stream.write(message.to_s)
+          write(message)
           self
         end
 
         def call(stream)
-          @stream = stream
-          @block.call(stream)
-        ensure
-          close
+          Sync do
+            @stream = stream
+            @block.call(stream)
+          ensure
+            close
+          end
         end
 
         def close
+          return if @closed
+
+          @barrier.stop
           @stream&.close
           @closed = true
         end

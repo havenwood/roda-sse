@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.email = 'shannonskipper@gmail.com'
   s.homepage = 'https://github.com/havenwood/roda-sse'
   s.files = %w[Gemfile LICENSE Rakefile README.md] + Dir['{spec,lib}/**/*.rb']
-  s.add_dependency('roda', '~> 3.0')
+  s.add_dependency('roda', '~> 3.85')
+  s.add_dependency('async', '~> 2.18')
   s.metadata['rubygems_mfa_required'] = 'true'
 end
