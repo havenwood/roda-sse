@@ -56,6 +56,12 @@ class Roda
           end
         end
       end
+
+      module InstanceMethods
+        def last_event_id
+          env['HTTP_LAST_EVENT_ID']
+        end
+      end
     end
 
     register_plugin(:sse, SSE)

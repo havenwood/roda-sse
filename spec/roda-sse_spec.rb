@@ -12,6 +12,7 @@ class App < Roda
   route do |r|
     r.root do
       r.sse do |stream|
+        last_event_id
         stream.write "data: hola\n\n"
       end
     end
@@ -22,30 +23,6 @@ def app = App.freeze.app
 
 describe 'roda-sse plugin' do
   prove_it!
-
-  describe 'stream class' do
-    before do
-      @stream = Roda::RodaPlugins::SSE::Stream.new do |stream|
-        stream << 42
-        stream.write(43)
-      end
-    end
-
-    it 'opens' do
-      refute @stream.closed?
-    end
-
-    it 'streams and closes' do
-      stream = Minitest::Mock.new
-      stream.expect(:<<, nil, [42])
-      stream.expect(:write, nil, [43])
-      stream.expect(:close, nil)
-      @stream.call(stream)
-      assert_instance_of Roda::RodaPlugins::SSE::Stream, @stream
-
-      stream.verify
-    end
-  end
 
   describe 'roda app' do
     include Rack::Test::Methods
@@ -79,6 +56,30 @@ describe 'roda-sse plugin' do
       assert_instance_of Roda::RodaPlugins::SSE::Stream, response_body
 
       response_body.call(stream)
+
+      stream.verify
+    end
+  end
+
+  describe 'stream class' do
+    before do
+      @stream = Roda::RodaPlugins::SSE::Stream.new do |stream|
+        stream << 42
+        stream.write(43)
+      end
+    end
+
+    it 'opens' do
+      refute @stream.closed?
+    end
+
+    it 'streams and closes' do
+      stream = Minitest::Mock.new
+      stream.expect(:<<, nil, [42])
+      stream.expect(:write, nil, [43])
+      stream.expect(:close, nil)
+      @stream.call(stream)
+      assert_instance_of Roda::RodaPlugins::SSE::Stream, @stream
 
       stream.verify
     end
