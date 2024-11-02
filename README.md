@@ -1,6 +1,10 @@
 # roda-sse
 
-The roda-sse Roda plugin adds SSE headers and provides Rack 3 streaming for you to send your own events.
+The roda-sse Roda plugin adds SSE provides a streaming interface for
+server-sent events. Each stream is wrapped in an [Async](https://github.com/socketry/async) reactor
+and events are sent asyncronously via tasks. The roda-sse plugin sets
+appropriate SSE headers, handles disconnection errors, ensures
+streams are properly closed and provies a `last_event_id` helper.
 
 ## Installation
 
@@ -14,6 +18,8 @@ Source code is available on GitHub at
 https://github.com/havenwood/roda-sse
 
 ## Usage
+
+See the [examples/](https://github.com/havenwood/roda-sse/tree/main/example) directory for an example app.
 
 roda-sse is a Roda plugin, so you need to load it into your Roda
 application similar to other plugins:

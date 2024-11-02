@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Colors</title>
+  <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+  <script src="https://unpkg.com/htmx-ext-sse@2.2.2/sse.js"></script>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+    }
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(<%= App::WIDTH %>, 1fr);
+      grid-template-rows: repeat(<%= App::HEIGHT %>, 1fr);
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+<%= yield %>
+</body>
+</html>

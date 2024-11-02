@@ -1,0 +1,5 @@
+<div class="grid-container" hx-ext="sse" sse-connect="/streaming" hx-swap="outerHTML">
+  <% (App::WIDTH * App::HEIGHT).times do |event| %>
+    <div class="grid-item" sse-swap="<%= event %>" style="background: #000000"></div>
+  <% end %>
+</div>
