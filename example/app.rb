@@ -22,11 +22,15 @@ class App < Roda
 
     r.is 'streaming' do
       r.sse do |stream|
-        Sync do
-          loop do
-            stream << message
-            sleep DELAY
-          end
+        # bomb = 10
+        loop do
+          # bomb -= 1
+          # if bomb.zero?
+          #   raise '💣'
+          # end
+
+          stream << message
+          sleep DELAY
         end
       end
     end

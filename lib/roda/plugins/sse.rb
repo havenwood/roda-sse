@@ -18,22 +18,15 @@ class Roda
     #     end
     #   end
     module SSE
-      class Stream
-        def initialize(&block)
-          @block = block
-          @barrier = Async::Barrier.new
+      class Output
+        def initialize(stream)
+          @stream = stream
         end
 
         def write(message)
           data = message.to_s
-
-          @barrier.async do
-            @stream.write(data)
-          rescue Errno::ECONNRESET, Errno::EPIPE
-            @barrier.close
-          end
-
-          data.bytesize
+          @stream.write(data)
+          return data.bytesize
         end
 
         def <<(message)
@@ -41,33 +34,40 @@ class Roda
           self
         end
 
-        def call(stream)
-          Sync do
-            @stream = stream
-            @block.call(stream)
-          ensure
-            close
+        def close(error = nil)
+          if stream = @stream
+            @stream = nil
+            stream.close_write(error)
           end
         end
+      end
 
-        def close
-          return if @closed
-
-          @barrier.stop
-          @stream&.close
-          @closed = true
+      class Body
+        def initialize(block)
+          @block = block
         end
-
-        def closed? = @closed
+        
+        def call(stream)
+          output = Output.new(stream)
+          @block.call(output)
+        rescue => error
+        ensure
+          stream.close_write(error)
+        end
       end
 
       module RequestMethods
+        HEADERS = {
+          'content-type' => 'text/event-stream',
+          'cache-control' => 'no-cache',
+        }.freeze
+
         def sse(&block)
           get do
             response['content-type'] = 'text/event-stream'
             response['cache-control'] = 'no-cache'
 
-            halt response.finish_with_body(Stream.new(&block))
+            halt [200, HEADERS.dup, Body.new(block)]
           end
         end
       end
