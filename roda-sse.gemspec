@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.license = 'MIT'
   s.summary = 'SSE integration for Roda'
   s.description = 'The roda-sse gem integrates simple SSE streaming into the roda web toolkit.'
-  s.author = 'Shannon Skipper'
+  s.authors = ['Shannon Skipper', 'Samuel Williams']
   s.email = 'shannonskipper@gmail.com'
   s.homepage = 'https://github.com/havenwood/roda-sse'
   s.files = %w[Gemfile LICENSE Rakefile README.md] + Dir['{spec,lib}/**/*.rb']
