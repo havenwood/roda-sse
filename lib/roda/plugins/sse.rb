@@ -47,8 +47,9 @@ class Roda
           output = Output.new(stream)
           block.call(output)
         rescue => error
-        ensure
           output.close(error)
+        ensure
+          output.close
         end
       end
 
