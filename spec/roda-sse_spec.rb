@@ -51,35 +51,11 @@ describe 'roda-sse plugin' do
 
       stream = Minitest::Mock.new
       stream.expect(:write, nil, ["data: hola\n\n"])
-      stream.expect(:close, nil)
+      stream.expect(:close_write, nil, [nil])
       response_body = last_response.instance_variable_get(:@body)
-      assert_instance_of Roda::RodaPlugins::SSE::Stream, response_body
+      assert_instance_of Roda::RodaPlugins::SSE::Body, response_body
 
       response_body.call(stream)
-
-      stream.verify
-    end
-  end
-
-  describe 'stream class' do
-    before do
-      @stream = Roda::RodaPlugins::SSE::Stream.new do |stream|
-        stream << 42
-        stream.write(43)
-      end
-    end
-
-    it 'opens' do
-      refute @stream.closed?
-    end
-
-    it 'streams and closes' do
-      stream = Minitest::Mock.new
-      stream.expect(:<<, nil, [42])
-      stream.expect(:write, nil, [43])
-      stream.expect(:close, nil)
-      @stream.call(stream)
-      assert_instance_of Roda::RodaPlugins::SSE::Stream, @stream
 
       stream.verify
     end
