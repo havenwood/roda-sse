@@ -1,18 +1,16 @@
 #!/usr/bin/env falcon host
 # frozen_string_literal: true
 
-load :rack, :supervisor
+require 'falcon/environment/rack'
+require 'falcon/environment/tls'
+require 'falcon/environment/self_signed_tls'
 
 service 'havenwood.dev' do
   include Falcon::Environment::Rack
+  include Falcon::Environment::TLS
+  include Falcon::Environment::SelfSignedTLS
 
   endpoint do
-    Async::HTTP::Endpoint
-      .parse('http2://127.0.0.1:9292')
-    # .with(protocol: Async::HTTP::Protocol::HTTP2)
+    Async::HTTP::Endpoint.for(scheme, "localhost", port: 9292, protocol: protocol, ssl_context: ssl_context)
   end
-end
-
-service 'supervisor' do
-  include Falcon::Environment::Supervisor
 end
