@@ -41,14 +41,10 @@ class Roda
         end
       end
 
-      class Body
-        def initialize(block)
-          @block = block
-        end
-        
+      Body = Data.define(:block) do
         def call(stream)
           output = Output.new(stream)
-          @block.call(output)
+          block.call(output)
         rescue => error
         ensure
           stream.close_write(error)
