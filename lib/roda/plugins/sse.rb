@@ -48,7 +48,7 @@ class Roda
           block.call(output)
         rescue => error
         ensure
-          stream.close_write(error)
+          output.close(error)
         end
       end
 
