@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'async'
-require 'async/barrier'
 
 class Roda
   module RodaPlugins
@@ -64,9 +63,6 @@ class Roda
 
         def sse(&block)
           get do
-            response['content-type'] = 'text/event-stream'
-            response['cache-control'] = 'no-cache'
-
             halt [200, HEADERS.dup, Body.new(block)]
           end
         end
