@@ -29,15 +29,16 @@ class Roda
         end
 
         def <<(message)
-          write(message)
-          self
+          @stream.write(message.to_s)
+          return self
         end
 
         def close(error = nil)
-          if stream = @stream
-            @stream = nil
-            stream.close_write(error)
-          end
+          return unless @stream
+
+          stream = @stream
+          @stream = nil
+          stream.close_write(error)
         end
       end
 
