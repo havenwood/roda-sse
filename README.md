@@ -1,10 +1,10 @@
 # roda-sse
 
-The roda-sse Roda plugin adds SSE provides a streaming interface for
+The `roda-sse` Roda plugin provides a streaming interface for
 server-sent events. Each stream is wrapped in an [Async](https://github.com/socketry/async) reactor
 and events are sent asyncronously via tasks. The roda-sse plugin sets
 appropriate SSE headers, handles disconnection errors, ensures
-streams are properly closed and provies a `last_event_id` helper.
+streams are properly closed and a `last_event_id` helper.
 
 ## Installation
 
@@ -21,8 +21,7 @@ https://github.com/havenwood/roda-sse
 
 See the [examples/](https://github.com/havenwood/roda-sse/tree/main/example) directory for an example app.
 
-roda-sse is a Roda plugin, so you need to load it into your Roda
-application similar to other plugins:
+Enable the `roda-sse` plugin in your Roda app.
 
 ```ruby
 class App < Roda
@@ -30,10 +29,12 @@ class App < Roda
 end
 ```
 
-In your routing block, you can then use `r.sse` to stream with the correct headers.
+In your routing block, you can then use an `r.sse do |stream|` block to stream output.
 
 ```ruby
 r.sse do |stream|
+  puts "Last-Event-ID header: #{last_event_id.inspect}"
+
   stream << "data: hello\n\n"
   stream << "data: world\n\n"
 end

@@ -22,6 +22,7 @@ class Roda
           @stream = stream
         end
 
+        # Returns the number of bytes written.
         def write(message)
           data = message.to_s
           @stream.write(data)
@@ -29,12 +30,15 @@ class Roda
           data.bytesize
         end
 
+        # Returns `self` after writing, so writes can be chained.
         def <<(message)
           @stream.write(message.to_s)
 
           self
         end
 
+        # Closes the stream for writing, signalling success or error.
+        # See https://datatracker.ietf.org/doc/html/rfc9113#RST_STREAM
         def close(error = nil)
           return unless @stream
 

@@ -1,9 +1,9 @@
 # Example roda-sse streaming app
 
 This example starts with 1,000 colorless <div> tags on an empty page.
-A single HTTP connection then streams server-sent events to change the
-background color of a random <div> several thousand times per second
-using [Async](https://github.com/socketry/async) Tasks.
+The open HTTP connection then streams server-sent events using [Async](https://github.com/socketry/async)
+on the server and [HTMX](https://github.com/bigskysoftware/htmx) on the client to randomly swap <div> tags with
+replacement <div> tags that have a randomly selected background color.
 
 ## Installation
 
@@ -25,4 +25,4 @@ bundle exec falcon host
 
 ## Usage
 
-Navigate your browser to the Falcon endpoint base url.
+Navigate your browser to the Falcon endpoint at: https://localhost:9292

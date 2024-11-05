@@ -5,8 +5,8 @@ Gem::Specification.new do |s|
   s.version = '0.3.0'
   s.required_ruby_version = '>= 3.2'
   s.license = 'MIT'
-  s.summary = 'SSE integration for Roda'
-  s.description = 'The roda-sse gem integrates simple SSE streaming into the roda web toolkit.'
+  s.summary = 'An SSE streaming plugin for Roda.'
+  s.description = 'This is a plugin that adds async SSE streaming to the Roda web toolkit.'
   s.authors = ['Shannon Skipper', 'Samuel Williams']
   s.email = 'shannonskipper@gmail.com'
   s.homepage = 'https://github.com/havenwood/roda-sse'
