@@ -25,12 +25,14 @@ class Roda
         def write(message)
           data = message.to_s
           @stream.write(data)
-          return data.bytesize
+
+          data.bytesize
         end
 
         def <<(message)
           @stream.write(message.to_s)
-          return self
+
+          self
         end
 
         def close(error = nil)
@@ -56,7 +58,7 @@ class Roda
       module RequestMethods
         HEADERS = {
           'content-type' => 'text/event-stream',
-          'cache-control' => 'no-cache',
+          'cache-control' => 'no-cache'
         }.freeze
 
         def sse(&block)

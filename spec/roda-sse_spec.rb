@@ -24,40 +24,37 @@ def app = App.freeze.app
 describe 'roda-sse plugin' do
   prove_it!
 
-  describe 'roda app' do
-    include Rack::Test::Methods
+  include Rack::Test::Methods
 
-    it 'responds 200 OK' do
-      get '/'
+  it 'responds 200 OK' do
+    get '/'
 
-      assert last_response.ok?
-    end
+    assert last_response.ok?
+  end
 
-    it 'does not respond to PUT' do
-      post '/'
+  it 'does not respond to PUT' do
+    post '/'
 
-      refute last_response.ok?
-    end
+    refute last_response.ok?
+  end
 
-    it 'has SSE headers' do
-      get '/'
+  it 'has SSE headers' do
+    get '/'
 
-      headers = {'content-type' => 'text/event-stream', 'cache-control' => 'no-cache'}
-      assert_equal headers, last_response.headers
-    end
+    headers = {'content-type' => 'text/event-stream', 'cache-control' => 'no-cache'}
+    assert_equal headers, last_response.headers
+  end
 
-    it 'streams the body' do
-      get '/'
+  it 'writes then closes write' do
+    get '/'
 
-      stream = Minitest::Mock.new
-      stream.expect(:write, nil, ["data: hola\n\n"])
-      stream.expect(:close_write, nil, [nil])
-      response_body = last_response.instance_variable_get(:@body)
-      assert_instance_of Roda::RodaPlugins::SSE::Body, response_body
+    stream = Minitest::Mock.new
+    stream.expect(:write, nil, ["data: hola\n\n"])
+    stream.expect(:close_write, nil, [nil])
+    response_body = last_response.instance_variable_get(:@body)
+    assert_instance_of Roda::RodaPlugins::SSE::Body, response_body
 
-      response_body.call(stream)
-
-      stream.verify
-    end
+    response_body.call(stream)
+    stream.verify
   end
 end
